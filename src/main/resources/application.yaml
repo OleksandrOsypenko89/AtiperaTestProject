@@ -1,0 +1,11 @@
+logging:
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: "logs/log-file.log"
+  logback:
+    rollingpolicy:
+      clean-history-on-start: on
+      file-name-pattern: "${logging.file.name}.%d{yyyy-MM-dd}.%i"
+      max-history: 7
+      total-size-cap: 10MB
