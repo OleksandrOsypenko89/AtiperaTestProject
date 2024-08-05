@@ -1,5 +1,6 @@
 package com.osypenko.atiperatestproject.exception;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 @Setter
@@ -7,7 +8,14 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({
+        "cause",
+        "stackTrace",
+        "suppressed",
+        "localizedMessage",
+        "documentation_url",
+})
 public class ExceptionMessage extends RuntimeException {
-    String status;
-    String message;
+    private int status;
+    private String message;
 }

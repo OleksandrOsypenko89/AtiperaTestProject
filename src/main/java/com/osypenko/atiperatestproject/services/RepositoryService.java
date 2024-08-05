@@ -108,9 +108,6 @@ public class RepositoryService {
 
             try {
                 throw objectMapper.readValue(responseWrapper.getBody(), ExceptionMessage.class);
-//                ExceptionMessage exceptionMessage = objectMapper.readValue(responseWrapper.getBody(), ExceptionMessage.class);
-//                System.out.println(exceptionMessage.getStatus());
-//                System.out.println(exceptionMessage.getMessage());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

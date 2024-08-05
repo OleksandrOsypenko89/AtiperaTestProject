@@ -1,4 +1,4 @@
-package com.osypenko.atiperatestproject.model;
+package com.osypenko.atiperatestproject.model.repository;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -9,8 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({
-        "url"
+        "protected"
 })
-public class Commit {
-    private String sha;
+public class Branch {
+    private String name;
+    private Commit commit;
 }
