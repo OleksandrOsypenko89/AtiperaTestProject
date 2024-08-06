@@ -1,8 +1,13 @@
 # ATIPERA TEST PROJECT
 
+![GitHub repo size](https://img.shields.io/github/repo-size/OleksandrOsypenko89/AtiperaTestProject)
+![GitHub forks](https://img.shields.io/github/forks/OleksandrOsypenko89/AtiperaTestProject)
+
 The program takes the github username and returns all its repositories that are not forks. 
 Then for each project in the repository, it lists all its branches and returns their name and sha of the last commit. 
 For the program to work, "Accept: application/json" must be present in the request header.
+
+---
 
 ### Run the project
 
@@ -28,6 +33,8 @@ For the program to work, "Accept: application/json" must be present in the reque
 #### 4. You can send requests 
   - If there is no header in the request ```Accept: application/json``` then the program won't return anything.
   - If username does not exist in github the program will return a response in the format ```{ “status”: ${responseCode} “message”: ${whyHasItHappened} }```
+
+---
 
 ### Stack of technologies used in the project
 
