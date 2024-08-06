@@ -45,6 +45,21 @@ public class RepositoryService {
 
 
 
+    private void checkStatus(HttpResponseWrapper responseWrapper) {
+        if (responseWrapper.getStatus() != 200) {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            try {
+                throw objectMapper.readValue(responseWrapper.getBody(), ExceptionMessage.class);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
+
+
     private List<BranchDTO> parseBranch(String[] url) {
         HttpResponseWrapper responseWrapper = request(url[0]);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -69,8 +84,8 @@ public class RepositoryService {
 
 
 
-    public List<RepositoryDTO> parseRepository(String login, List<RepositoryDTO> repositoryDTOList) {
-        HttpResponseWrapper responseWrapper = request("https://api.github.com/users/" + login + "/repos");
+    public List<RepositoryDTO> parseRepository(String userName, List<RepositoryDTO> repositoryDTOList) {
+        HttpResponseWrapper responseWrapper = request("https://api.github.com/users/" + userName + "/repos");
         ObjectMapper objectMapper = new ObjectMapper();
 
         checkStatus(responseWrapper);
@@ -98,21 +113,6 @@ public class RepositoryService {
         }
 
         return repositoryDTOList;
-    }
-
-
-
-    public void checkStatus(HttpResponseWrapper responseWrapper) {
-        if (responseWrapper.getStatus() != 200) {
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            try {
-                throw objectMapper.readValue(responseWrapper.getBody(), ExceptionMessage.class);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-        }
     }
 
 }

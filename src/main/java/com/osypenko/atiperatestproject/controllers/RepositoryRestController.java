@@ -19,19 +19,17 @@ import java.util.Objects;
 public class RepositoryRestController {
     private final RepositoryService repositoryService;
 
-    @GetMapping("/{login}")
+    @GetMapping("/{username}")
     public ResponseEntity<List<RepositoryDTO>> login(
-            @PathVariable String login,
+            @PathVariable String username,
             @RequestHeader HttpHeaders header
     ) {
         List<RepositoryDTO> repositoryDTOList = new ArrayList<>();
 
         if (Objects.requireNonNull(header.get("Accept")).contains("application/json")) {
             log.info("Header: {}", header.get("Accept"));
-            log.info("Login repo: {}", login);
-            repositoryDTOList = repositoryService.parseRepository(login, repositoryDTOList);
-        } else {
-            throw new RuntimeException("Header is not 'application/json'");
+            log.info("Login repo: {}", username);
+            repositoryDTOList = repositoryService.parseRepository(username, repositoryDTOList);
         }
 
         return ResponseEntity
