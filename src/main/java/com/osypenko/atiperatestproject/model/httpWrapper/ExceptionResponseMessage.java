@@ -8,22 +8,21 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({
         "documentation_url"
 })
-public class ResponseMessage {
+public class ExceptionResponseMessage {
     private String message;
 
     public String exceptionMessage(HttpResponseWrapper responseWrapper, ObjectMapper objectMapper) {
         try {
-            ResponseMessage responseMessage = objectMapper.readValue(responseWrapper.getBody(), ResponseMessage.class);
+            var responseMessage = objectMapper.readValue(responseWrapper.body(), ExceptionResponseMessage.class);
             return responseMessage.getMessage();
         } catch (JsonProcessingException e) {
-            log.error("Error parsing exception message: {}", responseWrapper.getBody(), e);
-            return "Error processing request";
+            log.error("Error parsing exception message: {}", responseWrapper.body());
+            return responseWrapper.status() != 200 ? "Not found" : "Error processing request";
         }
     }
 }

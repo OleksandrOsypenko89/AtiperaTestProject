@@ -1,13 +1,7 @@
 package com.osypenko.atiperatestproject.model.repository;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
 
-@Setter
-@Getter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonIgnoreProperties({
         "id",
         "node_id",
@@ -28,6 +22,6 @@ import lombok.*;
         "type",
         "site_admin"
 })
-public class Owner {
-    private String login;
-}
+public record Owner(
+        String login
+) {}

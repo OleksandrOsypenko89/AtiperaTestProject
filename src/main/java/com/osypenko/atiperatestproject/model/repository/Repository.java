@@ -1,13 +1,7 @@
 package com.osypenko.atiperatestproject.model.repository;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
 
-@Setter
-@Getter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonIgnoreProperties({
         "id",
         "node_id",
@@ -85,9 +79,9 @@ import lombok.*;
         "watchers",
         "default_branch"
 })
-public class Repository {
-    private String name;
-    private Owner owner;
-    private boolean fork;
-    private String branches_url;
-}
+public record Repository(
+        String name
+        , Owner owner
+        , boolean fork
+        , String branches_url
+) { }
