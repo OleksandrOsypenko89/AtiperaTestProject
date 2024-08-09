@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osypenko.atiperatestproject.dto.BranchDTO;
 import com.osypenko.atiperatestproject.dto.RepositoryDTO;
 import com.osypenko.atiperatestproject.exception.ExceptionMessage;
+import com.osypenko.atiperatestproject.model.httpWrapper.ResponseMessage;
 import com.osypenko.atiperatestproject.model.repository.Branch;
 import com.osypenko.atiperatestproject.model.httpWrapper.HttpResponseWrapper;
 import com.osypenko.atiperatestproject.model.repository.Repository;
@@ -24,6 +25,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RepositoryService {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ResponseMessage responseMessage = new ResponseMessage();
 
     private HttpResponseWrapper request(String url) {
         HttpClient client = HttpClient.newHttpClient();
@@ -32,29 +35,26 @@ public class RepositoryService {
                 .uri(URI.create(url))
                 .build();
 
-        HttpResponse<String> response;
-
         try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return new HttpResponseWrapper(response.statusCode(), response.body());
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            log.error("Not found {}", url);
+            throw new RuntimeException("Failed to send request to: " + url, e);
         }
-
-        return new HttpResponseWrapper(response.statusCode(), response.body());
     }
 
 
 
     private void checkStatus(HttpResponseWrapper responseWrapper) {
         if (responseWrapper.getStatus() != 200) {
-            ObjectMapper objectMapper = new ObjectMapper();
-
             try {
                 throw objectMapper.readValue(responseWrapper.getBody(), ExceptionMessage.class);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                String message = responseMessage.exceptionMessage(responseWrapper, objectMapper);
+                log.error("Request failed with status {}: {}", responseWrapper.getStatus(), message);
+                throw new ExceptionMessage(responseWrapper.getStatus(), message);
             }
-
         }
     }
 
@@ -62,37 +62,39 @@ public class RepositoryService {
 
     private List<BranchDTO> parseBranch(String[] url) {
         HttpResponseWrapper responseWrapper = request(url[0]);
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<BranchDTO> branchesDTO = new ArrayList<>();
-
-        checkStatus(responseWrapper);
 
         try {
+            checkStatus(responseWrapper);
+
             List<Branch> branches = objectMapper.readValue(responseWrapper.getBody(), new TypeReference<>() {});
+            List<BranchDTO> branchesDTO = new ArrayList<>();
             for (Branch branch : branches) {
+                BranchDTO branchDTO = new BranchDTO();
+
                 log.info("Branch name: {}", branch.getName());
                 log.info("Sha: {}", branch.getCommit().getSha());
-                BranchDTO branchDTO = new BranchDTO(branch.getName(), branch.getCommit().getSha());
+                branchDTO.setBranchName(branch.getName());
+                branchDTO.setCommitSha(branch.getCommit().getSha());
                 branchesDTO.add(branchDTO);
             }
+            return branchesDTO;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Error parsing branches", e);
+            String message = responseMessage.exceptionMessage(responseWrapper, objectMapper);
+            throw new ExceptionMessage(responseWrapper.getStatus(), message);
         }
-
-        return branchesDTO;
     }
 
 
 
     public List<RepositoryDTO> parseRepository(String userName) {
         HttpResponseWrapper responseWrapper = request("https://api.github.com/users/" + userName + "/repos");
-        List<RepositoryDTO> repositoryDTOList = new ArrayList<>();
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        checkStatus(responseWrapper);
 
         try {
+            checkStatus(responseWrapper);
+
             List<Repository> repositories = objectMapper.readValue(responseWrapper.getBody(), new TypeReference<>() {});
+            List<RepositoryDTO> repositoryDTOList = new ArrayList<>();
             for (Repository repository : repositories) {
                 if (!repository.isFork()) {
                     RepositoryDTO repositoryDTO = new RepositoryDTO();
@@ -109,11 +111,12 @@ public class RepositoryService {
                     repositoryDTOList.add(repositoryDTO);
                 }
             }
+            return repositoryDTOList;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Error parsing repositories", e);
+            String message = responseMessage.exceptionMessage(responseWrapper, objectMapper);
+            throw new ExceptionMessage(responseWrapper.getStatus(), message);
         }
-
-        return repositoryDTOList;
     }
 
 }

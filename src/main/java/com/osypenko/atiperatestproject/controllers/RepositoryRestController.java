@@ -20,7 +20,6 @@ public class RepositoryRestController {
     @RequestMapping(
             value = "/{username}"
             , method = RequestMethod.GET
-            , consumes = MediaType.APPLICATION_JSON_VALUE
             , produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<RepositoryDTO>> login(@PathVariable String username) {
