@@ -4,14 +4,12 @@ import com.osypenko.atiperatestproject.dto.RepositoryDTO;
 import com.osypenko.atiperatestproject.services.RepositoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -19,18 +17,16 @@ import java.util.Objects;
 public class RepositoryRestController {
     private final RepositoryService repositoryService;
 
-    @GetMapping("/{username}")
-    public ResponseEntity<List<RepositoryDTO>> login(
-            @PathVariable String username,
-            @RequestHeader HttpHeaders header
-    ) {
-        List<RepositoryDTO> repositoryDTOList = new ArrayList<>();
+    @RequestMapping(
+            value = "/{username}"
+            , method = RequestMethod.GET
+            , consumes = MediaType.APPLICATION_JSON_VALUE
+            , produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<RepositoryDTO>> login(@PathVariable String username) {
 
-        if (Objects.requireNonNull(header.get("Accept")).contains("application/json")) {
-            log.info("Header: {}", header.get("Accept"));
-            log.info("Login repo: {}", username);
-            repositoryDTOList = repositoryService.parseRepository(username, repositoryDTOList);
-        }
+        log.info("Login repo: {}", username);
+        List<RepositoryDTO> repositoryDTOList = repositoryService.parseRepository(username);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

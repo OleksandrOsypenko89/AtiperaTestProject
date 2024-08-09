@@ -84,8 +84,9 @@ public class RepositoryService {
 
 
 
-    public List<RepositoryDTO> parseRepository(String userName, List<RepositoryDTO> repositoryDTOList) {
+    public List<RepositoryDTO> parseRepository(String userName) {
         HttpResponseWrapper responseWrapper = request("https://api.github.com/users/" + userName + "/repos");
+        List<RepositoryDTO> repositoryDTOList = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
 
         checkStatus(responseWrapper);

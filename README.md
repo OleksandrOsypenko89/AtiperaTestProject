@@ -3,6 +3,7 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/OleksandrOsypenko89/AtiperaTestProject)
 ![GitHub forks](https://img.shields.io/github/forks/OleksandrOsypenko89/AtiperaTestProject)
 
+
 The program takes the github username and returns all its repositories that are not forks. 
 Then for each project in the repository, it lists all its branches and returns their name and sha of the last commit. 
 For the program to work, "Accept: application/json" must be present in the request header.
