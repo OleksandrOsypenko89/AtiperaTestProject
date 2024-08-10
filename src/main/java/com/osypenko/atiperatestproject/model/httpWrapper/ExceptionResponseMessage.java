@@ -22,7 +22,7 @@ public class ExceptionResponseMessage {
             return responseMessage.getMessage();
         } catch (JsonProcessingException e) {
             log.error("Error parsing exception message: {}", responseWrapper.body());
-            return responseWrapper.status() != 200 ? "Not found" : "Error processing request";
+            return responseWrapper.status() != 200 ? "Not Found" : "Error processing request";
         }
     }
 }
