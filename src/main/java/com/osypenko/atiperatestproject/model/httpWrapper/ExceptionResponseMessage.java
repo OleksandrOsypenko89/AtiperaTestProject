@@ -16,12 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 public class ExceptionResponseMessage {
     private String message;
 
-    public String exceptionMessage(HttpResponseWrapper responseWrapper, ObjectMapper objectMapper) {
+    public String responseBodyMessage(HttpResponseWrapper responseWrapper, ObjectMapper objectMapper) {
         try {
             var responseMessage = objectMapper.readValue(responseWrapper.body(), ExceptionResponseMessage.class);
             return responseMessage.getMessage();
         } catch (JsonProcessingException e) {
-            log.error("Error parsing exception message: {}", responseWrapper.body());
+            log.error("Error parsing exception message: {}", responseWrapper.body(), e);
             return responseWrapper.status() != 200 ? "Not Found" : "Error processing request";
         }
     }

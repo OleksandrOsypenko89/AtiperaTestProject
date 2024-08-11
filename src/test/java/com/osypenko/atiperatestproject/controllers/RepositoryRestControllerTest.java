@@ -1,6 +1,5 @@
 package com.osypenko.atiperatestproject.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osypenko.atiperatestproject.dto.BranchDTO;
 import com.osypenko.atiperatestproject.dto.RepositoryDTO;
 import com.osypenko.atiperatestproject.services.RepositoryService;
@@ -20,15 +19,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(RepositoryRestController.class)
 class RepositoryRestControllerTest {
     @MockBean
-    private RepositoryService repositoryService;
+    RepositoryService repositoryService;
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
+    MockMvc mockMvc;
 
-    private final String testLogin = "testRepositoryLogin";
+    String testLogin = "testRepositoryLogin";
 
-    private List<RepositoryDTO> getDtoList() {
+    List<RepositoryDTO> getDtoList() {
         var expectedBranchDTOOne = new BranchDTO(
                 "testBranchNameOne"
                 , "testCommitSHAOne"
@@ -48,7 +45,7 @@ class RepositoryRestControllerTest {
     }
 
     @Test
-    void loginIsTrue() throws Exception {
+    void login_ResponseIsTrue() throws Exception {
         when(repositoryService.parseRepository(testLogin)).thenReturn(getDtoList());
 
         mockMvc.perform(get("/{testLogin}", testLogin))
@@ -59,28 +56,25 @@ class RepositoryRestControllerTest {
                 .andExpect(jsonPath("$.[0].branches[0].commitSha").value("testCommitSHAOne"))
                 .andExpect(jsonPath("$.[0].branches[1].branchName").value("testBranchNameTwo"))
                 .andExpect(jsonPath("$.[0].branches[1].commitSha").value("testCommitSHATwo"));
-        verify(repositoryService, times(1)).parseRepository(testLogin);
+
+        verify(repositoryService).parseRepository(testLogin);
     }
 
     @Test
-    void trueHeader() throws Exception {
-        var testLoginJson = objectMapper.writeValueAsString(testLogin);
-
+    void login_HeaderIsTrue() throws Exception {
         mockMvc.perform(get("/{testLogin}", testLogin)
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .content(testLoginJson))
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
-        verify(repositoryService, times(1)).parseRepository(testLogin);
+
+        verify(repositoryService).parseRepository(testLogin);
     }
 
     @Test
-    void falseHeader() throws Exception {
-        var testLoginJson = objectMapper.writeValueAsString(testLogin);
-
+    void login_HeaderIsFalse() throws Exception {
         mockMvc.perform(get("/{testLogin}", testLogin)
-                        .accept(MediaType.APPLICATION_XML_VALUE)
-                        .content(testLoginJson))
+                        .accept(MediaType.APPLICATION_XML_VALUE))
                 .andExpect(status().isNotAcceptable());
-        verify(repositoryService, times(0)).parseRepository(testLogin);
+
+        verify(repositoryService, never()).parseRepository(testLogin);
     }
 }

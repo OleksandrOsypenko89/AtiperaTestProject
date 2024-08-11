@@ -63,7 +63,7 @@ public class RepositoryService {
 
         } catch (Exception e) {
             log.error("Error parsing branches", e);
-            var message = exceptionResponseMessage.exceptionMessage(responseWrapper, objectMapper);
+            var message = exceptionResponseMessage.responseBodyMessage(responseWrapper, objectMapper);
             throw new ExceptionMessage(responseWrapper.status(), message);
         }
     }
@@ -90,7 +90,7 @@ public class RepositoryService {
 
         } catch (Exception e) {
             log.error("Error parsing repositories", e);
-            var message = exceptionResponseMessage.exceptionMessage(responseWrapper, objectMapper);
+            var message = exceptionResponseMessage.responseBodyMessage(responseWrapper, objectMapper);
             throw new ExceptionMessage(responseWrapper.status(), message);
         }
     }
